@@ -16,6 +16,28 @@ Read epd file, analyze positions and save it to pgn and epd files.
 or  
 `eap.exe --input d:/chess/epd/wac.epd --engine D:/chess/engine/stockfish-11/sf11.exe --engineoption "Hash=128, Threads=2" --movetimems 1000`
 
+### Sample output
+##### PGN
+```
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "?"]
+[Black "?"]
+[Result "1-0"]
+[AnalysisMovetimeMs "1000"]
+[Annotator "Stockfish 11 64 POPCNT"]
+[EPDId "WAC.035"]
+[FEN "r3r2k/2R3pp/pp1q1p2/8/3P3R/7P/PP3PP1/3Q2K1 w - - 0 1"]
+[SetUp "1"]
+
+1. Rxh7+ Kxh7 2. Qh5+ Kg8 3. Qf7+ Kh8 4. Qxg7# 1-0
+```
+
+##### EPD
+`r3r3/2R3Qk/pp1q1p2/8/3P4/7P/PP3PP1/6K1 b - - acd 118; acs 1; ce 31996; id WAC.035; pm Rxh7+; pv Rxh7+ Kxh7 Qh5+ Kg8 Qf7+ Kh7 Qxg7#; c0 "analyzed by Stockfish 11 64 POPCNT";`
+
 
 ### Help
 ```
