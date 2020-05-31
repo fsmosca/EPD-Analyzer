@@ -17,7 +17,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.2.beta'
+APP_VERSION = 'v0.3.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -29,7 +29,7 @@ def get_time_h_mm_ss_ms(time_delta_ns):
     return '{:01d}h:{:02d}m:{:02d}s:{:03d}ms'.format(h, m, s, ms)
 
 
-def runengine(engine_file, engineoption, epdfile, movetimems,
+def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
               outputpgn, outputepd):
     """
     Run engine, save search info and output game in pgn format, and epd format.
@@ -46,7 +46,7 @@ def runengine(engine_file, engineoption, epdfile, movetimems,
             engine.configure({optname: optvalue})
 
     limit = chess.engine.Limit(time=movetimems/1000)
-    engine_name = engine.id['name']
+    engine_name = engine.id['name'] if enginename is None else enginename
 
     # Open epd file to get epd lines, analyze, and save it.
     with open(epdfile) as f:
@@ -126,6 +126,8 @@ def main():
                         help='output epd file in append mode, default=out.epd',
                         default='out.epd')
     parser.add_argument('--engine', required=True, help='input engine file')
+    parser.add_argument('--enginename', required=False,
+                        help='input engine name')
     parser.add_argument(
         '--engineoption', required=False,
         help='input engine options, e.g '
@@ -141,11 +143,12 @@ def main():
     outepd_file = args.outputepd
     movetimems = args.movetimems
     engineoption = args.engineoption
+    enginename = args.enginename
 
     timestart = time.perf_counter_ns()
 
     print('Analysis starts ...')
-    runengine(engine_file, engineoption, epd_file, movetimems,
+    runengine(engine_file, engineoption, enginename, epd_file, movetimems,
               outpgn_file, outepd_file)
     print('Analysis done!')
 
