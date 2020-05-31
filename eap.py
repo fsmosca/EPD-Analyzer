@@ -17,7 +17,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.3.beta'
+APP_VERSION = 'v0.4.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -53,6 +53,7 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
         for lines in f:
             epdline = lines.strip()
             board, epdinfo = chess.Board().from_epd(epdline)
+            orig_board = board.copy()
 
             # Get epd id
             posid = None
@@ -101,12 +102,13 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
             # Save to epd output
             with open(outputepd, 'a') as s:
                 acs = int(movetimems / 1000)
+                save_epd = orig_board.epd()
                 if posid is None:
-                    s.write(f'{board.epd()} acd {depth}; acs {acs}; '
+                    s.write(f'{save_epd} acd {depth}; acs {acs}; '
                             f'ce {score}; pm {pm}; pv {" ".join(sanpv)}; '
                             f'c0 "analyzed by {engine_name}";\n')
                 else:
-                    s.write(f'{board.epd()} acd {depth}; acs {acs}; '
+                    s.write(f'{save_epd} acd {depth}; acs {acs}; '
                             f'ce {score}; id "{posid}"; pm {pm}; '
                             f'pv {" ".join(sanpv)}; c0 "analyzed by {engine_name}";\n')
 
