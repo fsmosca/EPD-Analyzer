@@ -28,21 +28,23 @@ or
 [Result "1-0"]
 [AnalysisMovetimeMs "1000"]
 [Annotator "Stockfish 11 64 POPCNT"]
-[EPDId "WAC.035"]
-[FEN "r3r2k/2R3pp/pp1q1p2/8/3P3R/7P/PP3PP1/3Q2K1 w - - 0 1"]
+[EPDId "WAC.001"]
+[FEN "2rr3k/pp3pp1/1nnqbN1p/3pN3/2pP4/2P3Q1/PPB4P/R4RK1 w - - 0 1"]
 [SetUp "1"]
 
-1. Rxh7+ Kxh7 2. Qh5+ Kg8 3. Qf7+ Kh8 4. Qxg7# 1-0
+1. Qg6 Nxe5 2. Qh7# 1-0
 ```
 
 ##### EPD
-`r3r3/2R3Qk/pp1q1p2/8/3P4/7P/PP3PP1/6K1 b - - acd 118; acs 1; ce 31996; id WAC.035; pm Rxh7+; pv Rxh7+ Kxh7 Qh5+ Kg8 Qf7+ Kh7 Qxg7#; c0 "analyzed by Stockfish 11 64 POPCNT";`
+`2rr3k/pp3pp1/1nnqbN1p/3pN3/2pP4/2P3Q1/PPB4P/R4RK1 w - - acd 245; acs 1; ce 31998; id "WAC.001"; pm Qg6; pv Qg6 Nxe5 Qh7#; c0 "analyzed by Stockfish 11 64 POPCNT";`
 
 
 ### Help
 ```
-usage: EAP - EPD Analysis to PGN v0.1.beta [-h] --input INPUT [--outputpgn OUTPUTPGN] [--outputepd OUTPUTEPD] --engine
-                                           ENGINE [--engineoption ENGINEOPTION] --movetimems MOVETIMEMS
+PS D:\github\EPD-Analyzer> python ./eap.py -h
+usage: EAP - EPD Analysis to PGN v0.4.beta [-h] --input INPUT [--outputpgn OUTPUTPGN] [--outputepd OUTPUTEPD] --engine
+                                           ENGINE [--enginename ENGINENAME] [--engineoption ENGINEOPTION] --movetimems
+                                           MOVETIMEMS
 
 Analyze epd and output to pgn and epd
 
@@ -54,12 +56,14 @@ optional arguments:
   --outputepd OUTPUTEPD
                         output epd file in append mode, default=out.epd
   --engine ENGINE       input engine file
+  --enginename ENGINENAME
+                        input engine name
   --engineoption ENGINEOPTION
                         input engine options, e.g --engineoption "Threads=1, Hash=128, Debug Log File=log.txt"
   --movetimems MOVETIMEMS
                         input analysis time in ms, default=1000
 
-EAP - EPD Analysis to PGN v0.1.beta
+EAP - EPD Analysis to PGN v0.4.beta
 ```
 
 ### Credits
