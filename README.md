@@ -2,13 +2,20 @@
 Read epd file, analyze positions and save it to pgn and epd files.
 
 ### Guide
+##### A. Use python source code
 * Install python 3.8 and above
 * Install requirements.txt
+
+##### B. Use eap.exe
+* Download the eap.exe file in release link
 
 ### Command line
 * See sample batch file run_eap.bat
 * Sample command line  
-`python eap.py --input d:/chess/epd/wac.epd --engine D:/chess/engine/stockfish-11/sf11.exe --engineoption "Hash=128, Threads=2" --movetimems 1000`
+`python eap.py --input d:/chess/epd/wac.epd --engine D:/chess/engine/stockfish-11/sf11.exe --engineoption "Hash=128, Threads=2" --movetimems 1000`  
+or  
+`eap.exe --input d:/chess/epd/wac.epd --engine D:/chess/engine/stockfish-11/sf11.exe --engineoption "Hash=128, Threads=2" --movetimems 1000`
+
 
 ### Help
 ```
