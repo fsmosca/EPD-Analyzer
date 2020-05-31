@@ -1,15 +1,15 @@
 # EPD-Analyzer
 Read epd file, analyze positions and save it to pgn and epd files.
 
-### Guide
-##### A. Use python source code
+### A. Guide
+##### 1. Use python source code
 * Install python 3.8 and above
 * Install requirements.txt
 
-##### B. Use eap.exe
+##### 2. Use eap.exe
 * Download the eap.exe file in release link
 
-### Command line
+### B. Command line
 * See sample batch file run_eap.bat
 * Sample command line using default options  
 `python eap.py --input d:/chess/epd/wac.epd --engine D:/chess/engine/stockfish-11/sf11.exe --engineoption "Hash=128, Threads=2" --movetimems 1000`  
@@ -20,8 +20,8 @@ or
 * Output pgn output to sfpgnoutput.pgn  
 `eap.exe --input d:/chess/epd/wac.epd --enginename "Stockfish 11" --engine D:/chess/engine/stockfish-11/sf11.exe --engineoption "Hash=128, Threads=2" --movetimems 1000 --outputpgn sfpgnoutput.pgn`
 
-### Sample output
-##### PGN
+### C. Sample output
+##### 1. PGN
 ```
 [Event "?"]
 [Site "?"]
@@ -39,11 +39,11 @@ or
 1. Qg6 Nxe5 2. Qh7# 1-0
 ```
 
-##### EPD
+##### 2. EPD
 `2rr3k/pp3pp1/1nnqbN1p/3pN3/2pP4/2P3Q1/PPB4P/R4RK1 w - - acd 245; acs 1; ce 31998; id "WAC.001"; pm Qg6; pv Qg6 Nxe5 Qh7#; c0 "analyzed by Stockfish 11 64 POPCNT";`
 
 
-### Help
+### D. Help
 ```
 PS D:\github\EPD-Analyzer> python ./eap.py -h
 usage: EAP - EPD Analysis to PGN v0.4.beta [-h] --input INPUT [--outputpgn OUTPUTPGN] [--outputepd OUTPUTEPD] --engine
@@ -70,6 +70,6 @@ optional arguments:
 EAP - EPD Analysis to PGN v0.4.beta
 ```
 
-### Credits
+### E. Credits
 * Python-chess  
 https://github.com/niklasf/python-chess
