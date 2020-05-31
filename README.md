@@ -11,10 +11,14 @@ Read epd file, analyze positions and save it to pgn and epd files.
 
 ### Command line
 * See sample batch file run_eap.bat
-* Sample command line  
+* Sample command line using default options  
 `python eap.py --input d:/chess/epd/wac.epd --engine D:/chess/engine/stockfish-11/sf11.exe --engineoption "Hash=128, Threads=2" --movetimems 1000`  
 or  
 `eap.exe --input d:/chess/epd/wac.epd --engine D:/chess/engine/stockfish-11/sf11.exe --engineoption "Hash=128, Threads=2" --movetimems 1000`
+* Use enginename option  
+`eap.exe --input d:/chess/epd/wac.epd --enginename "Stockfish 11" --engine D:/chess/engine/stockfish-11/sf11.exe --engineoption "Hash=128, Threads=2" --movetimems 1000`
+* Output pgn output to sfpgnoutput.pgn  
+`eap.exe --input d:/chess/epd/wac.epd --enginename "Stockfish 11" --engine D:/chess/engine/stockfish-11/sf11.exe --engineoption "Hash=128, Threads=2" --movetimems 1000 --outputpgn sfpgnoutput.pgn`
 
 ### Sample output
 ##### PGN
