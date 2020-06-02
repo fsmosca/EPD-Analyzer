@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.6.beta'
+APP_VERSION = 'v0.7.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -96,6 +96,7 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
             game.headers['AnalysisMovetimeMs'] = str(movetimems)
             if posid is not None:
                 game.headers['EPDId'] = posid
+            game.headers['CentipawnEvaluation'] = str(score)
 
             # Save to pgn output
             with open(outputpgn, 'a') as s:
