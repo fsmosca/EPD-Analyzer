@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.13.beta'
+APP_VERSION = 'v0.14.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -50,7 +50,7 @@ def get_epd(infn):
 
 
 def save_output(game, board, depth, movetimems, score, pvval, engine_name,
-                posid, outputpgn, outputepd):
+                posid, dmval, outputpgn, outputepd):
     # Save to pgn
     with open(outputpgn, 'a') as s:
         s.write(f'{game}\n\n')
@@ -62,9 +62,15 @@ def save_output(game, board, depth, movetimems, score, pvval, engine_name,
         pmval = pvval[0]
         c0val = f'analyzed by {engine_name}'
         c1val = f'movetimems {movetimems}'
-        new_epd = board.epd(acd=depth, acs=acsval, ce=score,
-                            hmvc=board.halfmove_clock, id=idval, pm=pmval,
-                            pv=pvval, c0=c0val, c1=c1val)
+
+        if dmval is None:
+            new_epd = board.epd(acd=depth, acs=acsval, ce=score,
+                                hmvc=board.halfmove_clock, id=idval, pm=pmval,
+                                pv=pvval, c0=c0val, c1=c1val)
+        else:
+            new_epd = board.epd(acd=depth, acs=acsval, ce=score, dm=dmval,
+                                hmvc=board.halfmove_clock, id=idval, pm=pmval,
+                                pv=pvval, c0=c0val, c1=c1val)
         s.write(f'{new_epd}\n')
 
 
@@ -107,7 +113,7 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
             # Get epd id from input epd file
             posid = None if 'id' not in epdinfo else epdinfo['id']
 
-            pv, depth, score = '', None, None
+            pv, depth, score, dm = '', None, None, None
             with engine.analysis(board, limit) as analysis:
                 for info in analysis:
                     if ('upperbound' not in info
@@ -118,6 +124,9 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
                         score = info['score'].relative.score(mate_score=32000)
                         pv = info['pv']
                         depth = int(info['depth'])
+
+                        if info['score'].is_mate() and score > 0:
+                            dm = int(str(info['score']).split('#')[1])
 
             print(f'pos: {pos_num}\r', end='')
 
@@ -133,7 +142,7 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
             game.headers['CentipawnEvaluation'] = str(score)
 
             save_output(game, orig_board, depth, movetimems, score, pv,
-                        engine_name, posid, outputpgn, outputepd)
+                        engine_name, posid, dm, outputpgn, outputepd)
 
     engine.quit()
 
