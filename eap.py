@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.11.beta'
+APP_VERSION = 'v0.12.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -104,15 +104,8 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
                 logging.info(f'{epd} is already analyzed.')
                 continue
 
-            # Get epd id
-            posid = None
-            try:
-                posid = epdinfo['id']
-            except KeyError:
-                pass
-            except Exception:
-                print('Unexpected exception:')
-                raise
+            # Get epd id from input epd file
+            posid = None if 'id' not in epdinfo else epdinfo['id']
 
             pv, depth, score = '', None, None
             with engine.analysis(board, limit) as analysis:
