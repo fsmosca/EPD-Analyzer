@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.10.beta'
+APP_VERSION = 'v0.11.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -49,7 +49,7 @@ def get_epd(infn):
     return epds
 
 
-def save_output(game, epd, depth, movetimems, score, pm, sanpv, engine_name,
+def save_output(game, board, depth, movetimems, score, pvval, engine_name,
                 posid, outputpgn, outputepd):
     # Save to pgn
     with open(outputpgn, 'a') as s:
@@ -57,18 +57,15 @@ def save_output(game, epd, depth, movetimems, score, pm, sanpv, engine_name,
 
     # Save to epd output
     with open(outputepd, 'a') as s:
-        acs = int(movetimems / 1000)
-        if posid is None:
-            s.write(f'{epd} acd {depth}; acs {acs}; '
-                    f'ce {score}; pm {pm}; pv {" ".join(sanpv)}; '
-                    f'c0 "analyzed by {engine_name}"; '
-                    f'c1 "movetimems {movetimems}";\n')
-        else:
-            s.write(f'{epd} acd {depth}; acs {acs}; '
-                    f'ce {score}; id "{posid}"; pm {pm}; '
-                    f'pv {" ".join(sanpv)}; '
-                    f'c0 "analyzed by {engine_name}"; '
-                    f'c1 "movetimems {movetimems}";\n')
+        acsval = int(movetimems / 1000)
+        idval = f'{posid}'
+        pmval = pvval[0]
+        c0val = f'analyzed by {engine_name}'
+        c1val = f'movetimems {movetimems}'
+        new_epd = board.epd(acd=depth, acs=acsval, ce=score,
+                            hmvc=board.halfmove_clock, id=idval, pm=pmval,
+                            pv=pvval, c0=c0val, c1=c1val)
+        s.write(f'{new_epd}\n')
 
 
 def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
@@ -100,6 +97,7 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
             logging.info(epdline)
             board, epdinfo = chess.Board().from_epd(epdline)
             epd = board.epd()
+            orig_board = board.copy()
             pos_num += 1
 
             if epd in existing_epds:
@@ -129,13 +127,7 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
 
             print(f'pos: {pos_num}\r', end='')
 
-            nboard, sanpv, pm = board.copy(), [], None
-            for i, m in enumerate(pv):
-                sanpv.append(nboard.san(m))
-                if i == 0:
-                    pm = nboard.san(m)
-                nboard.push(m)
-
+            # Update board for pgn output
             for m in pv:
                 board.push(m)
 
@@ -146,8 +138,8 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
                 game.headers['EPDId'] = posid
             game.headers['CentipawnEvaluation'] = str(score)
 
-            save_output(game, epd, depth, movetimems, score, pm, sanpv, engine_name,
-                        posid, outputpgn, outputepd)
+            save_output(game, orig_board, depth, movetimems, score, pv,
+                        engine_name, posid, outputpgn, outputepd)
 
     engine.quit()
 
