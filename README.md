@@ -32,6 +32,7 @@ or
 [Result "1-0"]
 [AnalysisMovetimeMs "1000"]
 [Annotator "Stockfish 11 64 POPCNT"]
+[CentipawnEvaluation "31998"]
 [EPDId "WAC.001"]
 [FEN "2rr3k/pp3pp1/1nnqbN1p/3pN3/2pP4/2P3Q1/PPB4P/R4RK1 w - - 0 1"]
 [SetUp "1"]
@@ -45,10 +46,10 @@ or
 
 ### D. Help
 ```
-PS D:\github\EPD-Analyzer> python ./eap.py -h
-usage: EAP - EPD Analysis to PGN v0.4.beta [-h] --input INPUT [--outputpgn OUTPUTPGN] [--outputepd OUTPUTEPD] --engine
-                                           ENGINE [--enginename ENGINENAME] [--engineoption ENGINEOPTION] --movetimems
-                                           MOVETIMEMS
+PS D:\github\EPD-Analyzer> python eap.py -h
+usage: EAP - EPD Analysis to PGN v0.7.beta [-h] --input INPUT [--outputpgn OUTPUTPGN] [--outputepd OUTPUTEPD] --engine
+                                           ENGINE [--enginename ENGINENAME] [--engineoption ENGINEOPTION]
+                                           [--movetimems MOVETIMEMS] [--log]
 
 Analyze epd and output to pgn and epd
 
@@ -66,8 +67,9 @@ optional arguments:
                         input engine options, e.g --engineoption "Threads=1, Hash=128, Debug Log File=log.txt"
   --movetimems MOVETIMEMS
                         input analysis time in ms, default=1000
+  --log                 a flag to enable logging
 
-EAP - EPD Analysis to PGN v0.4.beta
+EAP - EPD Analysis to PGN v0.7.beta
 ```
 
 ### E. Credits
