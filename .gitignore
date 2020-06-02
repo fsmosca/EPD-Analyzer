@@ -4,4 +4,5 @@ dist
 __pycache__
 .idea
 compile.bat
-*.exe
+*.epd
+*.pgn
