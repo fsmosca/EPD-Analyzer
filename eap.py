@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.12.beta'
+APP_VERSION = 'v0.13.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -110,13 +110,14 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
             pv, depth, score = '', None, None
             with engine.analysis(board, limit) as analysis:
                 for info in analysis:
-                    if 'score' in info:
+                    if ('upperbound' not in info
+                            and 'lowerbound' not in info
+                            and 'score' in info
+                            and 'pv' in info
+                            and 'depth' in info):
                         score = info['score'].relative.score(mate_score=32000)
-                    if 'depth' in info:
-                        depth = int(info['depth'])
-                    if ('pv' in info and 'upperbound' not in info and
-                            'lowerbound' not in info):
                         pv = info['pv']
+                        depth = int(info['depth'])
 
             print(f'pos: {pos_num}\r', end='')
 
