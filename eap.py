@@ -10,6 +10,7 @@ Analyze EPD with an engine and create a PGN with engine pv as moves.
 import time
 from pathlib import Path
 import argparse
+import logging
 
 import chess
 import chess.pgn
@@ -17,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.4.beta'
+APP_VERSION = 'v0.5.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -52,6 +53,7 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
     with open(epdfile) as f:
         for lines in f:
             epdline = lines.strip()
+            logging.info(epdline)
             board, epdinfo = chess.Board().from_epd(epdline)
             orig_board = board.copy()
 
@@ -137,6 +139,8 @@ def main():
     parser.add_argument('--movetimems', required=True, type=int,
                         help='input analysis time in ms, default=1000',
                         default=1000)
+    parser.add_argument('--log', action="store_true",
+                        help='a flag to enable logging')
 
     args = parser.parse_args()
     epd_file = args.input
@@ -146,6 +150,10 @@ def main():
     movetimems = args.movetimems
     engineoption = args.engineoption
     enginename = args.enginename
+
+    if args.log:
+        logging.basicConfig(level=logging.DEBUG,
+                            filename='log_epdanalyzer.txt', filemode='w')
 
     timestart = time.perf_counter_ns()
 
