@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.5.beta'
+APP_VERSION = 'v0.6.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -136,7 +136,7 @@ def main():
         '--engineoption', required=False,
         help='input engine options, e.g '
              '--engineoption "Threads=1, Hash=128, Debug Log File=log.txt"')
-    parser.add_argument('--movetimems', required=True, type=int,
+    parser.add_argument('--movetimems', required=False, type=int,
                         help='input analysis time in ms, default=1000',
                         default=1000)
     parser.add_argument('--log', action="store_true",
