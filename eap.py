@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.8.beta'
+APP_VERSION = 'v0.9.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -47,6 +47,26 @@ def get_epd(infn):
                 epds.append(board.epd())
 
     return epds
+
+
+def save_output(game, epd, depth, movetimems, score, pm, sanpv, engine_name,
+                posid, outputpgn, outputepd):
+    # Save to pgn
+    with open(outputpgn, 'a') as s:
+        s.write(f'{game}\n\n')
+
+    # Save to epd output
+    with open(outputepd, 'a') as s:
+        acs = int(movetimems / 1000)
+        if posid is None:
+            s.write(f'{epd} acd {depth}; acs {acs}; '
+                    f'ce {score}; pm {pm}; pv {" ".join(sanpv)}; '
+                    f'c0 "analyzed by {engine_name}";\n')
+        else:
+            s.write(f'{epd} acd {depth}; acs {acs}; '
+                    f'ce {score}; id "{posid}"; pm {pm}; '
+                    f'pv {" ".join(sanpv)}; '
+                    f'c0 "analyzed by {engine_name}";\n')
 
 
 def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
@@ -124,22 +144,8 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
                 game.headers['EPDId'] = posid
             game.headers['CentipawnEvaluation'] = str(score)
 
-            # Save to pgn output
-            with open(outputpgn, 'a') as s:
-                s.write(f'{game}\n\n')
-
-            # Save to epd output
-            with open(outputepd, 'a') as s:
-                acs = int(movetimems / 1000)
-                if posid is None:
-                    s.write(f'{epd} acd {depth}; acs {acs}; '
-                            f'ce {score}; pm {pm}; pv {" ".join(sanpv)}; '
-                            f'c0 "analyzed by {engine_name}";\n')
-                else:
-                    s.write(f'{epd} acd {depth}; acs {acs}; '
-                            f'ce {score}; id "{posid}"; pm {pm}; '
-                            f'pv {" ".join(sanpv)}; '
-                            f'c0 "analyzed by {engine_name}";\n')
+            save_output(game, epd, depth, movetimems, score, pm, sanpv, engine_name,
+                        posid, outputpgn, outputepd)
 
     engine.quit()
 
