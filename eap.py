@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.7.beta'
+APP_VERSION = 'v0.8.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -30,12 +30,34 @@ def get_time_h_mm_ss_ms(time_delta_ns):
     return '{:01d}h:{:02d}m:{:02d}s:{:03d}ms'.format(h, m, s, ms)
 
 
+def get_epd(infn):
+    """
+    Read infn file and return the epd in a list.
+
+    :param infn: a file with analysis previously done by EPD Analyzer
+    :return: a list of EPD
+    """
+    epds = []
+
+    analyzed_file = Path(infn)
+    if analyzed_file.is_file():
+        with open(infn) as f:
+            for lines in f:
+                board, _ = chess.Board().from_epd(lines.strip())
+                epds.append(board.epd())
+
+    return epds
+
+
 def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
               outputpgn, outputepd):
     """
     Run engine, save search info and output game in pgn format, and epd format.
     """
-    num_pos = 0
+    # Read existing epd output file, if position is present don't analyze it.
+    existing_epds = get_epd(outputepd)
+
+    pos_num = 0
     folder = Path(engine_file).parents[0]
     engine = chess.engine.SimpleEngine.popen_uci(engine_file, cwd=folder)
 
@@ -55,7 +77,12 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
             epdline = lines.strip()
             logging.info(epdline)
             board, epdinfo = chess.Board().from_epd(epdline)
-            orig_board = board.copy()
+            epd = board.epd()
+            pos_num += 1
+
+            if epd in existing_epds:
+                logging.info(f'{epd} is already analyzed.')
+                continue
 
             # Get epd id
             posid = None
@@ -78,8 +105,7 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
                             'lowerbound' not in info):
                         pv = info['pv']
 
-            num_pos += 1
-            print(f'pos: {num_pos}\r', end='')
+            print(f'pos: {pos_num}\r', end='')
 
             nboard, sanpv, pm = board.copy(), [], None
             for i, m in enumerate(pv):
@@ -105,15 +131,15 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
             # Save to epd output
             with open(outputepd, 'a') as s:
                 acs = int(movetimems / 1000)
-                save_epd = orig_board.epd()
                 if posid is None:
-                    s.write(f'{save_epd} acd {depth}; acs {acs}; '
+                    s.write(f'{epd} acd {depth}; acs {acs}; '
                             f'ce {score}; pm {pm}; pv {" ".join(sanpv)}; '
                             f'c0 "analyzed by {engine_name}";\n')
                 else:
-                    s.write(f'{save_epd} acd {depth}; acs {acs}; '
+                    s.write(f'{epd} acd {depth}; acs {acs}; '
                             f'ce {score}; id "{posid}"; pm {pm}; '
-                            f'pv {" ".join(sanpv)}; c0 "analyzed by {engine_name}";\n')
+                            f'pv {" ".join(sanpv)}; '
+                            f'c0 "analyzed by {engine_name}";\n')
 
     engine.quit()
 
