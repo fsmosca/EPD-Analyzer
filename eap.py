@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.9.beta'
+APP_VERSION = 'v0.10.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -61,12 +61,14 @@ def save_output(game, epd, depth, movetimems, score, pm, sanpv, engine_name,
         if posid is None:
             s.write(f'{epd} acd {depth}; acs {acs}; '
                     f'ce {score}; pm {pm}; pv {" ".join(sanpv)}; '
-                    f'c0 "analyzed by {engine_name}";\n')
+                    f'c0 "analyzed by {engine_name}"; '
+                    f'c1 "movetimems {movetimems}";\n')
         else:
             s.write(f'{epd} acd {depth}; acs {acs}; '
                     f'ce {score}; id "{posid}"; pm {pm}; '
                     f'pv {" ".join(sanpv)}; '
-                    f'c0 "analyzed by {engine_name}";\n')
+                    f'c0 "analyzed by {engine_name}"; '
+                    f'c1 "movetimems {movetimems}";\n')
 
 
 def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
