@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.14.beta'
+APP_VERSION = 'v0.15.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -61,16 +61,16 @@ def save_output(game, board, depth, movetimems, score, pvval, engine_name,
         idval = f'{posid}'
         pmval = pvval[0]
         c0val = f'analyzed by {engine_name}'
-        c1val = f'movetimems {movetimems}'
+        acmsval = movetimems
 
         if dmval is None:
             new_epd = board.epd(acd=depth, acs=acsval, ce=score,
                                 hmvc=board.halfmove_clock, id=idval, pm=pmval,
-                                pv=pvval, c0=c0val, c1=c1val)
+                                pv=pvval, c0=c0val, Acms=acmsval)
         else:
             new_epd = board.epd(acd=depth, acs=acsval, ce=score, dm=dmval,
                                 hmvc=board.halfmove_clock, id=idval, pm=pmval,
-                                pv=pvval, c0=c0val, c1=c1val)
+                                pv=pvval, c0=c0val, Acms=acmsval)
         s.write(f'{new_epd}\n')
 
 
