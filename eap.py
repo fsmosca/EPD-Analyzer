@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.16.beta'
+APP_VERSION = 'v0.17.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -60,7 +60,7 @@ def save_output(game, board, depth, movetimems, score, pvval, engine_name,
         acsval = int(movetimems / 1000)
         idval = f'{posid}'
         pmval = pvval[0]
-        c0val = f'analyzed by {engine_name}'
+        anno = f'{engine_name}'
         acmsval = movetimems
         hmvcval = board.halfmove_clock
 
@@ -68,19 +68,19 @@ def save_output(game, board, depth, movetimems, score, pvval, engine_name,
             if hmvcval > 0:
                 new_epd = board.epd(acd=depth, acs=acsval, ce=score,
                                     hmvc=hmvcval, id=idval, pm=pmval,
-                                    pv=pvval, c0=c0val, Acms=acmsval)
+                                    pv=pvval, Anno=anno, Acms=acmsval)
             else:
                 new_epd = board.epd(acd=depth, acs=acsval, ce=score,
-                                    id=idval, pm=pmval, pv=pvval, c0=c0val,
+                                    id=idval, pm=pmval, pv=pvval, Anno=anno,
                                     Acms=acmsval)
         else:
             if hmvcval > 0:
                 new_epd = board.epd(acd=depth, acs=acsval, ce=score, dm=dmval,
                                     hmvc=hmvcval, id=idval, pm=pmval,
-                                    pv=pvval, c0=c0val, Acms=acmsval)
+                                    pv=pvval, Anno=anno, Acms=acmsval)
             else:
                 new_epd = board.epd(acd=depth, acs=acsval, ce=score, dm=dmval,
-                                    id=idval, pm=pmval, pv=pvval, c0=c0val,
+                                    id=idval, pm=pmval, pv=pvval, Anno=anno,
                                     Acms=acmsval)
 
         s.write(f'{new_epd}\n')
