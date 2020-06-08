@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.19.beta'
+APP_VERSION = 'v0.20.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -186,12 +186,12 @@ def main():
                         help='output epd file in append mode, default=out.epd',
                         default='out.epd')
     parser.add_argument('--engine', required=True, help='input engine file')
-    parser.add_argument('--enginename', required=False,
+    parser.add_argument('--engine-name', required=False,
                         help='input engine name')
     parser.add_argument(
-        '--engineoption', required=False,
+        '--engine-option', required=False,
         help='input engine options, e.g '
-             '--engineoption "Threads=1, Hash=128, Debug Log File=log.txt"')
+             '--engine-option "Threads=1, Hash=128, Debug Log File=log.txt"')
     parser.add_argument('--movetimems', required=False, type=int,
                         help='input analysis time in ms, default=1000',
                         default=1000)
@@ -207,8 +207,8 @@ def main():
     outpgn_file = args.outputpgn
     outepd_file = args.outputepd
     movetimems = args.movetimems
-    engineoption = args.engineoption
-    enginename = args.enginename
+    engineoption = args.engine_option
+    enginename = args.engine_name
 
     if args.log:
         logging.basicConfig(level=logging.DEBUG,
