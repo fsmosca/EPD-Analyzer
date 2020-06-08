@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.18.beta'
+APP_VERSION = 'v0.19.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -50,7 +50,7 @@ def get_epd(infn):
 
 
 def save_output(game, board, depth, movetimems, score, pvval, engine_name,
-                posid, dmval, outputpgn, outputepd):
+                posid, dmval, outputpgn, outputepd, elapse_ns):
     # Save to pgn
     with open(outputpgn, 'a') as s:
         s.write(f'{game}\n\n')
@@ -62,32 +62,35 @@ def save_output(game, board, depth, movetimems, score, pvval, engine_name,
         pmval = pvval[0]
         anno = f'{engine_name}'
         acmsval = movetimems
+        Aacmsval = elapse_ns // 1000000  # Aacms = Actual analysis count: milliseconds
         hmvcval = board.halfmove_clock
 
         if dmval is None:
             if hmvcval > 0:
                 new_epd = board.epd(acd=depth, acs=acsval, ce=score,
                                     hmvc=hmvcval, id=idval, pm=pmval,
-                                    pv=pvval, Anno=anno, Acms=acmsval)
+                                    pv=pvval, Anno=anno, Acms=acmsval,
+                                    Aacms=Aacmsval)
             else:
                 new_epd = board.epd(acd=depth, acs=acsval, ce=score,
                                     id=idval, pm=pmval, pv=pvval, Anno=anno,
-                                    Acms=acmsval)
+                                    Acms=acmsval, Aacms=Aacmsval)
         else:
             if hmvcval > 0:
                 new_epd = board.epd(acd=depth, acs=acsval, ce=score, dm=dmval,
                                     hmvc=hmvcval, id=idval, pm=pmval,
-                                    pv=pvval, Anno=anno, Acms=acmsval)
+                                    pv=pvval, Anno=anno, Acms=acmsval,
+                                    Aacms=Aacmsval)
             else:
                 new_epd = board.epd(acd=depth, acs=acsval, ce=score, dm=dmval,
                                     id=idval, pm=pmval, pv=pvval, Anno=anno,
-                                    Acms=acmsval)
+                                    Acms=acmsval, Aacms=Aacmsval)
 
         s.write(f'{new_epd}\n')
 
 
 def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
-              outputpgn, outputepd):
+              outputpgn, outputepd, extend_search):
     """
     Run engine, save search info and output game in pgn format, and epd format.
     """
@@ -105,7 +108,7 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
             optvalue = opt.split('=')[1].strip()
             engine.configure({optname: optvalue})
 
-    limit = chess.engine.Limit(time=movetimems/1000)
+    limit = chess.engine.Limit(time=4*movetimems/1000)
     engine_name = engine.id['name'] if enginename is None else enginename
 
     # Open epd file to get epd lines, analyze, and save it.
@@ -125,7 +128,8 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
             # Get epd id from input epd file
             posid = None if 'id' not in epdinfo else epdinfo['id']
 
-            pv, depth, score, dm = '', None, None, None
+            pv, depth, score, dm, elapse_ns = '', None, None, None, 0
+            t1 = time.perf_counter_ns()
             with engine.analysis(board, limit) as analysis:
                 for info in analysis:
                     if ('upperbound' not in info
@@ -139,6 +143,14 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
 
                         if info['score'].is_mate() and score > 0:
                             dm = int(str(info['score']).split('#')[1])
+
+                        # If moves in the pv is 1, extend the search as long
+                        # the score is not a mate score.
+                        if extend_search:
+                            elapse_ns = time.perf_counter_ns() - t1
+                            if (elapse_ns >= movetimems*1000000 and
+                                    (len(pv) > 1 or info['score'].is_mate())):
+                                break
 
             print(f'pos: {pos_num}\r', end='')
 
@@ -155,7 +167,8 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
             game.headers['CentipawnEvaluation'] = str(score)
 
             save_output(game, orig_board, depth, movetimems, score, pv,
-                        engine_name, posid, dm, outputpgn, outputepd)
+                        engine_name, posid, dm, outputpgn, outputepd,
+                        elapse_ns)
 
     engine.quit()
 
@@ -184,6 +197,9 @@ def main():
                         default=1000)
     parser.add_argument('--log', action="store_true",
                         help='a flag to enable logging')
+    parser.add_argument('--extend-search', action="store_true",
+                        help='a flag to extend the search if move in the pv '
+                             'is only 1, except if the score is already mate.')
 
     args = parser.parse_args()
     epd_file = args.input
@@ -202,7 +218,7 @@ def main():
 
     print('Analysis starts ...')
     runengine(engine_file, engineoption, enginename, epd_file, movetimems,
-              outpgn_file, outepd_file)
+              outpgn_file, outepd_file, args.extend_search)
     print('Analysis done!')
 
     elapse = time.perf_counter_ns() - timestart
