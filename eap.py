@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.17.beta'
+APP_VERSION = 'v0.18.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -147,6 +147,7 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
                 board.push(m)
 
             game = chess.pgn.Game().from_board(board)
+            game.headers['Event'] = f'Position no. {pos_num}'
             game.headers['Annotator'] = engine_name
             game.headers['AnalysisMovetimeMs'] = str(movetimems)
             if posid is not None:
