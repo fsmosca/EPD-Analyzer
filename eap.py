@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.20.beta'
+APP_VERSION = 'v0.21.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -108,7 +108,12 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
             optvalue = opt.split('=')[1].strip()
             engine.configure({optname: optvalue})
 
-    limit = chess.engine.Limit(time=4*movetimems/1000)
+    # Set search limits.
+    if extend_search:
+        limit = chess.engine.Limit(time=4*movetimems/1000)
+    else:
+        limit = chess.engine.Limit(time=movetimems/1000)
+
     engine_name = engine.id['name'] if enginename is None else enginename
 
     # Open epd file to get epd lines, analyze, and save it.
@@ -144,13 +149,18 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
                         if info['score'].is_mate() and score > 0:
                             dm = int(str(info['score']).split('#')[1])
 
-                        # If moves in the pv is 1, extend the search as long
-                        # the score is not a mate score.
+                        # If moves in the pv is only 1, extend the search as long
+                        # the score is not a mate score and extend_search is set.
                         if extend_search:
                             elapse_ns = time.perf_counter_ns() - t1
-                            if (elapse_ns >= movetimems*1000000 and
-                                    (len(pv) > 1 or info['score'].is_mate())):
-                                break
+                            if elapse_ns >= movetimems * 1000000:
+                                if info['score'].is_mate():
+                                    break
+                                if len(pv) > 1:
+                                    break
+
+            if not extend_search:
+                elapse_ns = time.perf_counter_ns() - t1
 
             print(f'pos: {pos_num}\r', end='')
 
