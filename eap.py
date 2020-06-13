@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.22.beta'
+APP_VERSION = 'v0.23.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -61,8 +61,10 @@ def save_output(game, board, depth, movetimems, score, pvval, engine_name,
         idval = f'{posid}'
         pmval = pvval[0]
         anno = f'{engine_name}'
+        # Acms = Analysis count: milliseconds
         acmsval = movetimems
-        Aacmsval = elapse_ns // 1000000  # Aacms = Actual analysis count: milliseconds
+        # Aacms = Actual analysis count: milliseconds
+        Aacmsval = elapse_ns // 1000000
         hmvcval = board.halfmove_clock
 
         if dmval is None:
@@ -169,15 +171,16 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
                             and 'score' in info
                             and 'pv' in info
                             and 'depth' in info):
-                        score = info['score'].relative.score(mate_score=32000)
+                        score = info['score'].relative.score(
+                            mate_score=32000)
                         pv = info['pv']
                         depth = int(info['depth'])
 
                         if info['score'].is_mate() and score > 0:
                             dm = int(str(info['score']).split('#')[1])
 
-                        # If moves in the pv is only 1, extend the search as long
-                        # the score is not a mate score and extend_search is set.
+                        # If moves in the pv is only 1, extend the search if
+                        # the score is not a mate and extend_search is set.
                         if extend_search:
                             elapse_ns = time.perf_counter_ns() - t1
                             if elapse_ns >= movetimems * 1000000:
