@@ -18,7 +18,7 @@ import chess.engine
 
 
 APP_NAME = 'EAP - EPD Analysis to PGN'
-APP_VERSION = 'v0.21.beta'
+APP_VERSION = 'v0.22.beta'
 
 
 def get_time_h_mm_ss_ms(time_delta_ns):
@@ -89,8 +89,39 @@ def save_output(game, board, depth, movetimems, score, pvval, engine_name,
         s.write(f'{new_epd}\n')
 
 
+def search_limit(extend_search, movetimems, sdepth):
+    limit = None
+    if extend_search:
+        if sdepth == 0:
+            if movetimems < 1:
+                # If depth and movetime are both zero, set time to 100ms
+                limit = chess.engine.Limit(time=100/1000)
+            else:
+                limit = chess.engine.Limit(time=4 * movetimems / 1000)
+        else:
+            if movetimems < 1:
+                limit = chess.engine.Limit(depth=sdepth)
+            else:
+                limit = chess.engine.Limit(time=4 * movetimems / 1000,
+                                           depth=sdepth)
+    else:
+        if sdepth == 0:
+            if movetimems < 1:
+                limit = chess.engine.Limit(time=100 / 1000)
+            else:
+                limit = chess.engine.Limit(time=movetimems / 1000)
+        else:
+            if movetimems < 1:
+                limit = chess.engine.Limit(depth=sdepth)
+            else:
+                limit = chess.engine.Limit(time=movetimems / 1000,
+                                           depth=sdepth)
+
+    return limit
+
+
 def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
-              outputpgn, outputepd, extend_search):
+              outputpgn, outputepd, extend_search, sdepth):
     """
     Run engine, save search info and output game in pgn format, and epd format.
     """
@@ -108,11 +139,7 @@ def runengine(engine_file, engineoption, enginename, epdfile, movetimems,
             optvalue = opt.split('=')[1].strip()
             engine.configure({optname: optvalue})
 
-    # Set search limits.
-    if extend_search:
-        limit = chess.engine.Limit(time=4*movetimems/1000)
-    else:
-        limit = chess.engine.Limit(time=movetimems/1000)
+    limit = search_limit(extend_search, movetimems, sdepth)
 
     engine_name = engine.id['name'] if enginename is None else enginename
 
@@ -205,6 +232,9 @@ def main():
     parser.add_argument('--movetimems', required=False, type=int,
                         help='input analysis time in ms, default=1000',
                         default=1000)
+    parser.add_argument('--depth', required=False, type=int,
+                        help='input analysis depth, default=0',
+                        default=0)
     parser.add_argument('--log', action="store_true",
                         help='a flag to enable logging')
     parser.add_argument('--extend-search', action="store_true",
@@ -228,7 +258,7 @@ def main():
 
     print('Analysis starts ...')
     runengine(engine_file, engineoption, enginename, epd_file, movetimems,
-              outpgn_file, outepd_file, args.extend_search)
+              outpgn_file, outepd_file, args.extend_search, args.depth)
     print('Analysis done!')
 
     elapse = time.perf_counter_ns() - timestart
