@@ -46,10 +46,9 @@ or
 
 ### D. Help
 ```
-PS D:\github\EPD-Analyzer> python eap.py -h
-usage: EAP - EPD Analysis to PGN v0.7.beta [-h] --input INPUT [--outputpgn OUTPUTPGN] [--outputepd OUTPUTEPD] --engine
-                                           ENGINE [--enginename ENGINENAME] [--engineoption ENGINEOPTION]
-                                           [--movetimems MOVETIMEMS] [--log]
+(venv) D:\github\EPD-Analyzer>python eap.py -h
+usage: EAP - EPD Analysis to PGN v0.23.beta [-h] --input INPUT [--outputpgn OUTPUTPGN] [--outputepd OUTPUTEPD] --engine ENGINE [--engine-name ENGINE_NAME]
+                                            [--engine-option ENGINE_OPTION] [--movetimems MOVETIMEMS] [--depth DEPTH] [--log] [--extend-search]
 
 Analyze epd and output to pgn and epd
 
@@ -61,15 +60,17 @@ optional arguments:
   --outputepd OUTPUTEPD
                         output epd file in append mode, default=out.epd
   --engine ENGINE       input engine file
-  --enginename ENGINENAME
+  --engine-name ENGINE_NAME
                         input engine name
-  --engineoption ENGINEOPTION
-                        input engine options, e.g --engineoption "Threads=1, Hash=128, Debug Log File=log.txt"
+  --engine-option ENGINE_OPTION
+                        input engine options, e.g --engine-option "Threads=1, Hash=128, Debug Log File=log.txt"
   --movetimems MOVETIMEMS
                         input analysis time in ms, default=1000
+  --depth DEPTH         input analysis depth, default=0
   --log                 a flag to enable logging
+  --extend-search       a flag to extend the search if move in the pv is only 1, except if the score is already mate.
 
-EAP - EPD Analysis to PGN v0.7.beta
+EAP - EPD Analysis to PGN v0.23.beta
 ```
 
 ### E. Credits
