@@ -19,6 +19,11 @@ or
 `eap.exe --input d:/chess/epd/wac.epd --enginename "Stockfish 11" --engine D:/chess/engine/stockfish-11/sf11.exe --engineoption "Hash=128, Threads=2" --movetimems 1000`
 * Output pgn output to sfpgnoutput.pgn  
 `eap.exe --input d:/chess/epd/wac.epd --enginename "Stockfish 11" --engine D:/chess/engine/stockfish-11/sf11.exe --engineoption "Hash=128, Threads=2" --movetimems 1000 --outputpgn sfpgnoutput.pgn`
+* Use a fixed depth to analyze the EPD.  
+`... --depth 14 --movetimems 0`
+* Combine depth and time  
+`--depth 14 --movetimems 1000`  
+Engine will stop whichever is reached first.
 
 ### C. Sample output
 ##### 1. PGN
